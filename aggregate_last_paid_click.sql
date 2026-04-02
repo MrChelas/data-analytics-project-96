@@ -4,7 +4,7 @@ with ads_data as (
 		utm_source,
 		utm_medium,
 		utm_campaign,
-		sum(daily_spent) as total_spent
+		sum(daily_spent) as total_cost
 	from vk_ads
 	group by date(campaign_date), utm_source, utm_medium, utm_campaign
 
@@ -15,7 +15,7 @@ UNION ALL
 		utm_source,
 		utm_medium,
 		utm_campaign,
-		sum(daily_spent) as total_spent
+		sum(daily_spent) as total_cost
 	from ya_ads
 	group by date(campaign_date), utm_source, utm_medium, utm_campaign
 ),
@@ -47,7 +47,7 @@ agg_data as (
 	visit_date,
 	count(visitor_id) as visitors_count,
 	count(created_at) filter(where created_at is not null) as leads_count,
-	count(created_at) filter(where status_id = 142) as purchases_count, --visitor_id--
+	count(created_at) filter(where status_id = 142) as purchases_count,
 	sum(amount) filter(where status_id = 142) as revenue
     from last_paid_click
     where rn = 1
@@ -60,16 +60,16 @@ select
     a.utm_source,
     a.utm_medium,
     a.utm_campaign,
-    coalesce(m.total_spent, 0) as total_cost,
+    ads.total_cost,
     a.leads_count,
     a.purchases_count, 
     a.revenue
 from agg_data as a
-left join ads_data as m
-on a.visit_date = m.visit_date and
-lower(a.utm_source) = lower(m.utm_source) and
-lower(a.utm_medium) = lower(m.utm_medium) and 
-lower(a.utm_campaign) = lower(m.utm_campaign)
+left join ads_data as ads
+on a.visit_date = ads.visit_date and
+lower(a.utm_source) = lower(ads.utm_source) and
+lower(a.utm_medium) = lower(ads.utm_medium) and 
+lower(a.utm_campaign) = lower(ads.utm_campaign)
 order by 
     revenue desc nulls last, visit_date, visitors_count desc, utm_source, utm_medium, utm_campaign
 limit 15;

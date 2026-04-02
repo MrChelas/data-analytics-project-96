@@ -20,7 +20,7 @@ where s.medium in ('cpc', 'cpm', 'cpa', 'youtube', 'cpp', 'tg', 'social')
 
 select 
     visitor_id,
-    date(visit_date),
+    visit_date,
     UTM_source,
     UTM_medium,
     UTM_campaign,  
