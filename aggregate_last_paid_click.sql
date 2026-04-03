@@ -41,14 +41,14 @@ where s.medium in ('cpc', 'cpm', 'cpa', 'youtube', 'cpp', 'tg', 'social')
 
 agg_data as (
     select
-	source as utm_source,
-	medium as utm_medium,
-	campaign as utm_campaign,
-	visit_date,
-	count(visitor_id) as visitors_count,
-	count(created_at) filter(where created_at is not null) as leads_count,
-	count(created_at) filter(where status_id = 142) as purchases_count,
-	sum(amount) filter(where status_id = 142) as revenue
+		source as utm_source,
+		medium as utm_medium,
+		campaign as utm_campaign,
+		visit_date,
+		count(visitor_id) as visitors_count,
+		count(created_at) filter(where created_at is not null) as leads_count,
+		count(created_at) filter(where status_id = 142) as purchases_count,
+		sum(amount) filter(where status_id = 142) as revenue
     from last_paid_click
     where rn = 1
     group by utm_source, utm_medium, utm_campaign, visit_date
@@ -66,10 +66,10 @@ select
     a.revenue
 from agg_data as a
 left join ads_data as ads
-on a.visit_date = ads.visit_date and
-lower(a.utm_source) = lower(ads.utm_source) and
-lower(a.utm_medium) = lower(ads.utm_medium) and 
-lower(a.utm_campaign) = lower(ads.utm_campaign)
+	on a.visit_date = ads.visit_date and
+	lower(a.utm_source) = lower(ads.utm_source) and
+	lower(a.utm_medium) = lower(ads.utm_medium) and 
+	lower(a.utm_campaign) = lower(ads.utm_campaign)
 order by 
     revenue desc nulls last, visit_date, visitors_count desc, utm_source, utm_medium, utm_campaign
 limit 15;
